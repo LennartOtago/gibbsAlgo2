@@ -6,34 +6,34 @@ import matplotlib.image as mpimg
 import numpy.linalg as lin
 
 
-def sample_from_laplacian(siz_of_img):
+def sample_laplacian(siz_of_img):
     # ***
-    # sample from Laplacian matrix in this case with variance for and zero mean
+    # sample from Laplacian matrix in this case with variance 4 and 0 mean
     # original L L_org = np.array([[ 0, -1, 0],[ -1, 4, -1],[ 0, -1, 0]])
     # ***
 
     v = np.zeros((siz_of_img, siz_of_img))
     # top to bottom first row
     for i in range(0, siz_of_img):
-        rand_num = (1 / np.sqrt(2)) * np.array([-1, 1]) * rd.normal(0, np.sqrt(2))
+        rand_num = np.array([-1, 1]) * rd.normal(0, 1)#np.sqrt(2))#(1 / np.sqrt(2)) *
         v[0, i], v[-1, i] = [v[0, i], v[-1, i]] + np.array(rand_num)
 
     for j in range(0, siz_of_img):
         for i in range(0, siz_of_img - 1):
-            rand_num = (1 / np.sqrt(2)) * np.array([-1, 1]) * rd.normal(0, np.sqrt(2))
+            rand_num =  np.array([-1, 1]) * rd.normal(0, 1)#(1 / np.sqrt(2)) *
             v[j, i], v[j, i + 1] = [v[j, i], v[j, i + 1]] + np.array(rand_num)
 
     # all normal up and down neighbours
 
     for j in range(0, siz_of_img - 1):
         for i in range(0, siz_of_img):
-            rand_num = (1 / np.sqrt(2)) * np.array([-1, 1]) * rd.normal(0, np.sqrt(2))
+            rand_num =  np.array([-1, 1]) * rd.normal(0,1)#np.sqrt(2))#(1 / np.sqrt(2)) *
             v[j, i], v[j + 1, i] = [v[j, i], v[j + 1, i]] + np.array(rand_num)
 
     # all left right boundaries neighbours
 
     for i in range(0, siz_of_img):
-        rand_num = (1 / np.sqrt(2)) * np.array([-1, 1]) * rd.normal(0, np.sqrt(2))
+        rand_num =  np.array([-1, 1]) * rd.normal(0,1)# np.sqrt(2))#(1 / np.sqrt(2))
         v[i, 0], v[i, -1] = [v[i, 0], v[i, -1]] + np.array(rand_num)
 
     return v
@@ -71,7 +71,7 @@ rho[0] = 5.16e-5
 
 gamma[0] = 0.218
 
-v_2 = sample_from_laplacian(siz)
+v_2 = sample_laplacian(siz)
 
 v_rd = rd.normal(0, 1, 256 ** 2).reshape((256, 256))
 
@@ -97,7 +97,7 @@ for n in range(1, n_sample):
     gamma[n] = np.random.default_rng().gamma(shape_gamma, scale_gamma)
     shape_rho, scale_rho = siz ** 2 / 2 + a_rho, 1 / (0.5 * norm_L ** 2 + b_rho)  # 1,1e4 #
     rho[n] = np.random.default_rng().gamma(shape_rho, scale_rho)
-    v_2 = sample_from_laplacian(siz)
+    v_2 = sample_laplacian(siz)
     v_rd = rd.normal(0, 1, 256 ** 2).reshape((256, 256))
     W = np.sqrt(gamma[n]) * np.conj(PSF) * fft2(v_rd) + np.sqrt(rho[n]) * fft2(v_2)
     print(rho[n])
